@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Set up Clearfeed for X</title>
+  <link rel="stylesheet" href="extension/setup.css">
+  <script defer src="setup.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <img src="extension/icons/clearfeed.svg" width="60" height="60" alt="">
+      <div>
+        <h1>Set up Clearfeed for X</h1>
+        <p>Hide promoted posts in your Chrome feed.</p>
+      </div>
+    </header>
+    <section aria-labelledby="install">
+      <h2 id="install">Add Clearfeed to Chrome</h2>
+      <ol>
+        <li>Open Google Chrome and enter <code>chrome://extensions</code> in its address bar. The macOS installer opens that page in a separate tab.</li>
+        <li>Turn on <strong>Developer mode</strong> and click <strong>Load unpacked</strong>.</li>
+        <li>Copy the folder path below. In Chrome’s folder picker, press <kbd>⌘⇧G</kbd>, paste the path, press <kbd>Return</kbd>, and click <strong>Select</strong>.</li>
+      </ol>
+      <div class="actions">
+        <label for="folder">Extension folder</label>
+        <input id="folder" readonly value="The extension folder beside Start Here.html">
+        <button id="copy" type="button" hidden>Copy folder path</button>
+      </div>
+      <p role="status" id="copy-status"></p>
+    </section>
+    <section aria-labelledby="next">
+      <h2 id="next">Finish on X</h2>
+      <p>Chrome opens Clearfeed’s welcome page after you load it. Follow the steps there to pin the toolbar button and check your connection on X.</p>
+    </section>
+    <footer>Chrome loads the extension from the folder you select. Keep that folder in place.</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,21 @@
+/* X absolutely positions its virtual rows. Leave a measurable one-pixel row
+   so X can recalculate the offsets instead of keeping the ad's old height. */
+[data-clearfeed-hidden] {
+  display: none !important;
+}
+
+[data-testid="cellInnerDiv"][data-clearfeed-hidden="post"] {
+  display: block !important;
+  height: 1px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+[data-testid="cellInnerDiv"][data-clearfeed-hidden="post"] > * {
+  display: none !important;
+}

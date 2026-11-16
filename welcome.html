@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Finish setting up Clearfeed</title>
+  <link rel="stylesheet" href="setup.css">
+  <script defer src="settings.js"></script>
+  <script defer src="welcome.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <img src="icons/clearfeed.svg" width="60" height="60" alt="">
+      <div>
+        <h1>Clearfeed is installed</h1>
+        <p>Pin it and check that it’s active on X.</p>
+      </div>
+    </header>
+    <section aria-labelledby="finish">
+      <h2 id="finish">Finish setup</h2>
+      <ol>
+        <li>Open Chrome’s <strong>Extensions</strong> menu (the puzzle piece). Pin <strong>Clearfeed for X</strong> to keep the purple shield in your toolbar.</li>
+        <li>Open X. If X was already open, refresh that tab once. If Chrome asks for site access, allow Clearfeed to run on <code>x.com</code>.</li>
+        <li>Click the shield. Look for <strong>Active on X</strong> and make sure <strong>Ad blocking</strong> is on. The count rises as Clearfeed finds and hides promoted posts.</li>
+      </ol>
+      <div class="actions">
+        <a class="primary" href="https://x.com/home" target="_blank" rel="noopener">Open X ↗</a>
+        <button type="button" id="check">Check connection</button>
+      </div>
+      <p role="status" id="connection"></p>
+    </section>
+    <footer>The toolbar menu has pause, appearance, and feed controls. Select <strong>Setup help</strong> to return here.</footer>
+  </main>
+</body>
+</html>

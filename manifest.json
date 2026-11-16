@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Clearfeed for X",
+  "version": "1.2.0",
+  "description": "Hide promoted posts on X, with a quieter feed and simple controls.",
+  "minimum_chrome_version": "123",
+  "permissions": ["storage"],
+  "host_permissions": ["https://x.com/*", "https://www.x.com/*"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Clearfeed for X",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "options_ui": { "page": "popup.html", "open_in_tab": true },
+  "background": { "service_worker": "worker.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*", "https://www.x.com/*"],
+      "css": ["feed.css"],
+      "js": ["settings.js", "feed.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

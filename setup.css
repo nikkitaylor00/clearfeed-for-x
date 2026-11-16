@@ -1,0 +1,43 @@
+:root {
+  color-scheme: light dark;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ink: light-dark(#231d35, #f4efff);
+  --muted: light-dark(#625a74, #c2b9d4);
+  --paper: light-dark(#fff, #221d30);
+  --line: light-dark(#e8e1f1, #3b324b);
+  --accent: light-dark(#5739cb, #cfbeff);
+  --wash: light-dark(#f0eaff, #34264c);
+  color: var(--ink);
+  background: light-dark(#f5f2fa, #15121d);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 660px; margin: 0 auto; padding: 40px 22px; }
+header { display: flex; gap: 16px; align-items: center; margin-bottom: 23px; }
+header img { flex: none; }
+h1 { margin: 0; font-size: clamp(24px, 5vw, 35px); letter-spacing: -.04em; }
+header p { margin: 4px 0 0; }
+p, li { line-height: 1.55; }
+p { color: var(--muted); }
+section { border: 1px solid var(--line); background: var(--paper); border-radius: 20px; padding: 22px; }
+section + section { margin-top: 12px; }
+h2 { font-size: 17px; margin: 0 0 10px; }
+section p:last-child { margin-bottom: 0; }
+ol { padding-left: 22px; margin: 0; }
+li { padding-left: 3px; }
+li + li { margin-top: 12px; }
+label { display: block; font-size: 13px; font-weight: 650; margin-bottom: 6px; }
+input { width: 100%; font: 13px ui-monospace, monospace; padding: 10px; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 9px; }
+.actions { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; margin-top: 12px; }
+button, .primary {
+  display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 650;
+  padding: 8px 12px; color: var(--accent); border: 0; border-radius: 10px;
+  background: var(--wash); text-decoration: none; cursor: pointer;
+}
+.primary { background: #6242d3; color: white; }
+a { color: var(--accent); }
+code { background: var(--wash); border-radius: 5px; padding: 1px 4px; overflow-wrap: anywhere; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+[role="status"] { font-size: 14px; min-height: 1.55em; margin-bottom: 0; }
+footer { margin-top: 16px; font-size: 13px; color: var(--muted); }
