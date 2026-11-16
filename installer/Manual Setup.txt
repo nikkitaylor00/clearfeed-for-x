@@ -1,14 +1,16 @@
-Clearfeed for X — Manual setup on macOS
+Clearfeed for X - Install in Chrome on macOS
 
-1. Copy the “Clearfeed Extension” folder from this disk image into a
-   permanent location, such as Documents. Chrome loads it from that folder.
+1. Copy the "Clearfeed Extension" folder from this disk image into
+   your Home folder. In Finder, choose Go > Home, or press Command-Shift-H.
 
-2. In Google Chrome, open chrome://extensions. Turn on Developer mode,
-   click Load unpacked, and select the copy of “Clearfeed Extension”.
+2. In Google Chrome, enter chrome://extensions in the address bar.
+   Turn on Developer mode, click Load unpacked, and select the copy of
+   "Clearfeed Extension" in your Home folder.
 
-3. Pin Clearfeed from the Extensions menu and open or refresh x.com.
-   The toolbar menu should show “Active on X”.
+3. Pin Clearfeed from Chrome's Extensions menu, then open or refresh x.com.
+   The toolbar menu should say "Active on X."
 
-To update a manually installed copy, replace the files in the same
-folder, click Reload on the existing Clearfeed card in Chrome, and
-refresh X. Keeping the same folder preserves your settings and count.
+Updating an existing installation
+Copy the new files into the folder Chrome already loads. Click Reload
+on Clearfeed's card in chrome://extensions, then refresh X. Using the
+same folder keeps your settings and all-time count.
