@@ -55,16 +55,17 @@ build_native_installer() {
 identity="${CLEARFEED_CODESIGN_IDENTITY:--}"
 notary_profile="${CLEARFEED_NOTARY_PROFILE:-}"
 image="$output_dir/Clearfeed-for-X-${version}-macOS.dmg"
-if [[ "${CLEARFEED_NATIVE_INSTALLER:-0}" == "1" ]]; then
+if [[ "${CLEARFEED_NATIVE_INSTALLER:-1}" == "1" ]]; then
   if [[ "$identity" == "-" && -n "$notary_profile" ]]; then
     printf 'Set CLEARFEED_CODESIGN_IDENTITY to a Developer ID Application identity to notarize.\n' >&2
     exit 1
   fi
-  image="$output_dir/Clearfeed-for-X-${version}-macOS-Native.dmg"
   build_native_installer
 elif [[ "$identity" != "-" || -n "$notary_profile" ]]; then
   printf 'Set CLEARFEED_NATIVE_INSTALLER=1 to build and sign the optional native app.\n' >&2
   exit 1
+else
+  image="$output_dir/Clearfeed-for-X-${version}-macOS-Files-Only.dmg"
 fi
 
 # The public image contains regular documents and extension files. Give every
