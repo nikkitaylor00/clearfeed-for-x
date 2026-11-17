@@ -2,7 +2,7 @@
 
 ![Clearfeed for X on macOS. The purple toolbar menu shows tab and all-time ad counts.](media/clearfeed-preview.png)
 
-Clearfeed is a free, open-source Chrome extension for macOS that hides labeled promoted posts and trends on X. Use its toolbar menu to pause blocking, view your ad counts, hide sidebar suggestions, and change its appearance.
+Clearfeed is a free, open-source Chrome extension for macOS and Windows that hides labeled promoted posts and trends on X. Use its toolbar menu to pause blocking, view your ad counts, hide sidebar suggestions, and change its appearance.
 
 ## Install on macOS
 
@@ -21,6 +21,15 @@ Open the newer DMG and copy the new extension files into the same folder you loa
 
 To remove Clearfeed, click **Remove** on its Chrome card. You can then delete the folder you used for the extension.
 
+## Install on Windows
+
+1. [Download the Windows ZIP](https://github.com/nikkitaylor00/clearfeed-for-x/releases/download/v1.3.2/Clearfeed-for-X-1.3.2-Windows.zip), right-click it in File Explorer, and choose **Extract All**.
+2. Move the extracted **Clearfeed Extension** folder somewhere you’ll keep it, such as Documents.
+3. In Chrome 123 or newer, open `chrome://extensions`. Turn on **Developer mode**, click **Load unpacked**, and select the **Clearfeed Extension** folder containing `manifest.json`.
+4. Pin Clearfeed from Chrome’s Extensions menu, then open or refresh X. You can also open the **Windows Setup.txt** guide included in the ZIP.
+
+To update, copy the new extension files into the same folder to keep your settings and all-time count. Click **Reload** on Clearfeed’s card at `chrome://extensions`, then refresh X.
+
 ## Scope and privacy
 
 Clearfeed processes already loaded posts only on `x.com` and `www.x.com`. It keeps preferences and the all-time count in Chrome’s local extension storage and does not transmit browsing data. The current tab count restarts on page load. Unlabeled sponsorships may still appear, and changes to X’s feed can require a Clearfeed update. Clearfeed is independent of X.
@@ -30,5 +39,7 @@ Clearfeed processes already loaded posts only on `x.com` and `www.x.com`. It kee
 The extension has no runtime dependencies. For development, select this repository folder in **Load unpacked**. Run `./scripts/package-macos.sh` on macOS with Node.js and the Xcode command-line tools to build the same DMG as the public release.
 
 The native installer source is in [installer](installer). Set `CLEARFEED_NATIVE_INSTALLER=0` to build a files-only DMG. For a notarized private build with the app, set `CLEARFEED_CODESIGN_IDENTITY` to a Developer ID Application identity and `CLEARFEED_NOTARY_PROFILE` to an existing notarytool keychain profile. [Apple’s notarization workflow](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution/)
+
+On Windows, run `./scripts/package-windows.ps1` in PowerShell to build the ZIP in `dist`.
 
 Clearfeed is released under the [MIT license](LICENSE).
