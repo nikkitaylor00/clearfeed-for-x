@@ -32,6 +32,8 @@ To update, copy the new extension files into the same folder to keep your settin
 
 ## Scope and privacy
 
+Clearfeed hides ads locally in Chrome after X loads them. It doesn’t automate any actions on your X account.
+
 Clearfeed processes already loaded posts only on `x.com` and `www.x.com`. It keeps preferences and the all-time count in Chrome’s local extension storage and does not transmit browsing data. The current tab count restarts on page load. Unlabeled sponsorships may still appear, and changes to X’s feed can require a Clearfeed update. Clearfeed is independent of X.
 
 ## Build from source
