@@ -1,0 +1,58 @@
+name: Windows ZIP
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'codex/windows-release']
+    paths:
+      - '.github/workflows/windows-release.yml'
+      - '.github/scripts/smoke-windows.mjs'
+      - 'scripts/package-windows.ps1'
+      - 'windows/README.txt'
+      - 'manifest.json'
+      - '*.js'
+      - '*.html'
+      - '*.css'
+      - 'icons/**'
+      - 'LICENSE'
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Test the unpacked ZIP in Chrome on Windows
+    runs-on: windows-2025
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Build and unpack for testing
+        shell: pwsh
+        run: |
+          $zip = ./scripts/package-windows.ps1
+          $testFolder = Join-Path $env:RUNNER_TEMP 'Clearfeed Windows Test'
+          Expand-Archive -LiteralPath $zip -DestinationPath $testFolder
+          if (!(Test-Path -LiteralPath (Join-Path $testFolder 'Windows Setup.txt'))) {
+              throw 'The Windows setup guide is missing.'
+          }
+          "CLEARFEED_TEST_ROOT=$testFolder" >> $env:GITHUB_ENV
+      - name: Install browser test tools
+        shell: pwsh
+        run: |
+          $tools = Join-Path $env:CLEARFEED_TEST_ROOT 'tools'
+          npm install --prefix "$tools" --no-save --no-audit --no-fund puppeteer@25.17.0
+          "CLEARFEED_TEST_TOOLS=$tools" >> $env:GITHUB_ENV
+      - name: Load the extension and exercise ad blocking
+        run: node .github/scripts/smoke-windows.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: clearfeed-windows
+          path: dist/*-Windows.zip
+          if-no-files-found: error
+          retention-days: 7
