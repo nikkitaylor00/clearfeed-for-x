@@ -10,7 +10,8 @@ const requireTools = createRequire(path.join(process.env.CLEARFEED_TEST_TOOLS, '
 const { default: puppeteer } = await import(pathToFileURL(requireTools.resolve('puppeteer')).href);
 const extension = path.join(testRoot, 'Clearfeed Extension');
 const manifest = JSON.parse(await readFile(path.join(extension, 'manifest.json'), 'utf8'));
-const browser = await puppeteer.launch({ headless: true, pipe: true, enableExtensions: true, protocolTimeout: 20000 });
+const launchOptions = { headless: true, pipe: true, enableExtensions: true, protocolTimeout: 20000, userDataDir: path.join(testRoot, 'test-browser-profile') };
+let browser = await puppeteer.launch(launchOptions);
 
 const home = 'https://x.com/home';
 const feed = `<!doctype html><html><body>
@@ -51,8 +52,8 @@ try {
   const page = await browser.newPage();
   await page.setRequestInterception(true);
   page.on('request', async request => {
-    if (request.isNavigationRequest() && request.url() === home) {
-      await request.respond({ status: 200, contentType: 'text/html', body: feed });
+    if (request.isNavigationRequest() && request.url().startsWith('https://x.com/')) {
+      await request.respond({ status: 200, contentType: 'text/html', body: new URL(request.url()).pathname === '/tester' ? '<div data-testid="UserName">Tester</div>' : feed });
     } else {
       await request.abort();
     }
@@ -101,8 +102,28 @@ try {
   await menu.click('#favorite-topics button');
   await page.bringToFront();
   await page.waitForFunction(() => !document.querySelector('#organic').hasAttribute('data-clearfeed-favorite') && !document.querySelector('#organic').hasAttribute('data-clearfeed-unmatched'), poll);
+  await page.goto('https://x.com/tester', { waitUntil: 'load' });
+  await page.waitForFunction(() => document.querySelector('#clearfeed-save-person'), poll);
+  await page.evaluate(() => document.querySelector('#clearfeed-save-person').click());
+  await menu.bringToFront();
+  await menu.waitForFunction(() => document.querySelector('#favorite-people').textContent.includes('@tester'), poll);
+  await menu.type('#favorite-search', 'doesnotmatch');
+  await menu.waitForFunction(() => document.querySelector('#favorite-people').textContent.includes('No matching favorites'), poll);
+  const opened = browser.waitForTarget(target => target.url().startsWith('https://x.com/search?'));
+  await menu.click('#favorite-open');
+  const target = await opened;
+  assert.equal(new URL(target.url()).searchParams.get('q'), '(from:tester)');
+  console.log('Profile favorite button, favorites feed link and menu search passed.');
+  await browser.close();
+  browser = await puppeteer.launch(launchOptions);
+  const restored = await browser.newPage();
+  await restored.goto(`chrome-extension://${id}/popup.html`);
+  await checkCount(restored, '2');
+  await restored.click('#tab-favorites');
+  await restored.waitForFunction(() => document.querySelector('#favorite-people').textContent.includes('@tester') && document.querySelector('#favorite-only').checked, poll);
+  console.log('Favorites, preferences and all-time count survived a full Chrome restart.');
   console.log('Favorites saving, topic matching, filtering, removal and menu reload passed.');
-  console.log(`Clearfeed ${manifest.version} passed in ${await browser.version()} on Windows ${process.arch}.`);
+  console.log(`Clearfeed ${manifest.version} passed in ${await browser.version()} on ${process.platform} ${process.arch}.`);
 } finally {
   await browser.close();
 }
