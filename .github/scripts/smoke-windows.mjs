@@ -65,6 +65,7 @@ try {
   const menu = await browser.newPage();
   await menu.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' });
   await checkCount(menu, '1');
+  assert.notEqual(await menu.$eval('body', body => getComputedStyle(body).backgroundColor), 'rgba(0, 0, 0, 0)');
   await setBlocking(menu, false);
   await page.bringToFront();
   await checkFeed(page, false);
@@ -173,7 +174,6 @@ try {
   await menu.click('#favorite-profile-buttons');
   await page.bringToFront();
   await page.waitForFunction(() => !document.querySelector('#clearfeed-save-person'), poll);
-  await menu.bringToFront();
   await menu.bringToFront();
   await menu.click('#favorite-profile-buttons');
   await page.bringToFront();
