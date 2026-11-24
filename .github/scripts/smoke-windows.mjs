@@ -116,10 +116,12 @@ try {
   console.log('Profile favorite button, favorites feed link and menu search passed.');
   await browser.close();
   browser = await puppeteer.launch(launchOptions);
+  assert.equal(await browser.installExtension(extension), id);
   const restored = await browser.newPage();
   await restored.goto(`chrome-extension://${id}/popup.html`);
   await checkCount(restored, '2');
-  await restored.click('#tab-favorites');
+  await restored.bringToFront();
+  await restored.evaluate(() => document.querySelector('#tab-favorites').click());
   await restored.waitForFunction(() => document.querySelector('#favorite-people').textContent.includes('@tester') && document.querySelector('#favorite-only').checked, poll);
   console.log('Favorites, preferences and all-time count survived a full Chrome restart.');
   console.log('Favorites saving, topic matching, filtering, removal and menu reload passed.');
