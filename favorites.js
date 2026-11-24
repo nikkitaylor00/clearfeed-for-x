@@ -2,7 +2,7 @@
 'use strict';
 (() => {
   const key = 'clearfeedFavorites';
-  const empty = { people: [], topics: [], highlight: true, only: false };
+  const empty = { people: [], topics: [], highlight: true };
   let state = { ...empty };
   const normalize = value => value.normalize('NFKC').trim().toLocaleLowerCase();
   const searchUrl = query => 'https://x.com/search?' + new URLSearchParams({ q: query, f: 'live' });
@@ -47,7 +47,6 @@
         if (!list.children.length) { const row = document.createElement('li'); row.textContent = 'No matching favorites'; list.append(row); }
       }
       document.getElementById('favorite-highlight').checked = state.highlight;
-      document.getElementById('favorite-only').checked = state.only;
       document.getElementById('favorite-open').disabled = !query();
     };
     document.getElementById('favorite-search').oninput = refresh;
@@ -63,7 +62,7 @@
         input.value = '';
       });
     };
-    for (const [id, preference] of [['favorite-highlight', 'highlight'], ['favorite-only', 'only']]) {
+    for (const [id, preference] of [['favorite-highlight', 'highlight']]) {
       document.getElementById(id).onchange = event => attempt(() => save({ [preference]: event.target.checked }));
     }
     document.getElementById('favorite-open').onclick = () => chrome.tabs.create({ url: searchUrl('(' + query() + ')') });
@@ -74,7 +73,8 @@
     function scan() {
       queued = false;
       observer.disconnect();
-      const filtering = state.only && (state.people.length + state.topics.length > 0) && (location.pathname === '/home' || location.pathname === '/search');
+      // Restore rows marked by older builds without changing X's virtual row heights.
+      document.querySelectorAll('[data-clearfeed-unmatched]').forEach(row => row.removeAttribute('data-clearfeed-unmatched'));
       for (const post of document.querySelectorAll('article[data-testid="tweet"]')) {
         const author = post.querySelector('[data-testid="User-Name"] a[href]');
         const handle = author?.getAttribute('href')?.split('/').filter(Boolean)[0]?.toLowerCase();
@@ -86,14 +86,15 @@
         });
         const row = post.closest('[data-testid="cellInnerDiv"]') || post;
         row.toggleAttribute('data-clearfeed-favorite', match && state.highlight);
-        row.toggleAttribute('data-clearfeed-unmatched', filtering && !match);
+
       }
       const profile = document.querySelector('[data-testid="UserName"]');
       const handle = location.pathname.match(/^\/([a-zA-Z0-9_]{1,15})\/?$/)?.[1]?.toLowerCase();
       let button = document.getElementById('clearfeed-save-person');
       if (profile && handle && !reserved.has(handle)) {
         if (!button) { button = document.createElement('button'); button.id = 'clearfeed-save-person'; profile.after(button); }
-        button.textContent = state.people.includes(handle) ? 'Saved in Clearfeed' : 'Add to Clearfeed favorites';
+        const label = state.people.includes(handle) ? 'Saved in Clearfeed' : 'Add to Clearfeed favorites';
+        if (button.textContent !== label) button.textContent = label;
         button.onclick = async () => {
           try {
             const current = (await chrome.storage.local.get(key))[key] || empty;

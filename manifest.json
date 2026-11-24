@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Clearfeed for X",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Hide promoted posts on X, with a quieter feed and simple controls.",
   "minimum_chrome_version": "123",
   "permissions": [

@@ -21,5 +21,4 @@
 }
 
 [data-clearfeed-favorite] { box-shadow: inset 3px 0 #9877ff; background-color:rgba(135,100,255,.07); }
-[data-clearfeed-unmatched] { height:1px !important; min-height:0 !important; overflow:hidden !important; visibility:hidden !important; }
 #clearfeed-save-person { border:1px solid #9877ff; border-radius:20px; padding:9px 16px; background:transparent; color:#9877ff; font:600 14px system-ui; margin:8px 0; cursor:pointer; }

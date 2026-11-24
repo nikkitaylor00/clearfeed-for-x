@@ -88,13 +88,37 @@ try {
   await menu.type('#favorite-input', 'Chrome extensions');
   await menu.click('#favorite-form button');
   await menu.waitForFunction(() => document.querySelector('#favorite-topics').textContent.includes('Chrome extensions'), poll);
-  await menu.click('#favorite-only');
+  await menu.evaluate(async () => {
+    const { clearfeedFavorites } = await chrome.storage.local.get('clearfeedFavorites');
+    await chrome.storage.local.set({ clearfeedFavorites: { ...clearfeedFavorites, only: true } });
+  });
   await page.bringToFront();
-  await page.waitForFunction(() => document.querySelector('#sponsored').hasAttribute('data-clearfeed-unmatched'), poll);
+  await page.evaluate(() => {
+    const feed = document.createElement('div');
+    feed.id = 'virtual-feed'; feed.style.cssText = 'position:relative;height:4000px';
+    for (let i = 0; i < 40; i++) {
+      const row = document.createElement('div');
+      row.dataset.testid = 'cellInnerDiv';
+      row.style.cssText = `position:absolute;top:${i * 100}px;height:100px;width:500px`;
+      row.innerHTML = '<article data-testid="tweet" style="height:100px"><div data-testid="User-Name"><a href="/other">Other</a></div><p data-testid="tweetText">Unrelated post</p></article>';
+      if (i === 0) row.setAttribute('data-clearfeed-unmatched', '');
+      feed.append(row);
+    }
+    document.body.append(feed);
+    window.scrollTo(0, 600);
+  });
+  await page.waitForFunction(() => !document.querySelector('[data-clearfeed-unmatched]'), poll);
+  await new Promise(resolve => setTimeout(resolve, 500));
+  assert.ok(await page.evaluate(() => [...document.querySelectorAll('#virtual-feed > div')].every(row => row.getBoundingClientRect().height === 100 && getComputedStyle(row).visibility === 'visible')));
+  const scrollBefore = await page.evaluate(() => scrollY);
+  await page.evaluate(() => document.querySelector('#virtual-feed article p').textContent = 'Chrome extensions');
+  await page.waitForFunction(() => document.querySelector('#virtual-feed > div').hasAttribute('data-clearfeed-favorite'), poll);
+  assert.equal(await page.evaluate(() => scrollY), scrollBefore);
+  console.log('Virtual rows stay visible and retain their height and scroll position with legacy favorites-only settings.');
   await menu.bringToFront();
   await menu.reload();
   await menu.click('#tab-favorites');
-  await menu.waitForFunction(() => document.querySelector('#favorite-only').checked && document.querySelector('#favorite-people').textContent.includes('@nikki'), poll);
+  await menu.waitForFunction(() => document.querySelector('#favorite-people').textContent.includes('@nikki'), poll);
   await menu.click('#favorite-people button');
   await page.bringToFront();
   await page.waitForFunction(() => document.querySelector('#organic').hasAttribute('data-clearfeed-favorite'), poll);
@@ -122,9 +146,9 @@ try {
   await checkCount(restored, '2');
   await restored.bringToFront();
   await restored.evaluate(() => document.querySelector('#tab-favorites').click());
-  await restored.waitForFunction(() => document.querySelector('#favorite-people').textContent.includes('@tester') && document.querySelector('#favorite-only').checked, poll);
+  await restored.waitForFunction(() => document.querySelector('#favorite-people').textContent.includes('@tester'), poll);
   console.log('Favorites, preferences and all-time count survived a full Chrome restart.');
-  console.log('Favorites saving, topic matching, filtering, removal and menu reload passed.');
+  console.log('Favorites saving, topic matching, stable scrolling, removal and menu reload passed.');
   console.log(`Clearfeed ${manifest.version} passed in ${await browser.version()} on ${process.platform} ${process.arch}.`);
 } finally {
   await browser.close();
