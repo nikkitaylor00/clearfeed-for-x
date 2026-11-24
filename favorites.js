@@ -2,7 +2,7 @@
 'use strict';
 (() => {
   const key = 'clearfeedFavorites';
-  const empty = { people: [], topics: [], highlight: true, color: '#007aff' };
+  const empty = { people: [], topics: [], enabled: true, profileButtons: true, highlight: true, color: '#007aff' };
   let state = { ...empty };
   const palette = { Blue: '#007aff', Teal: '#00897b', Sage: '#66845b', Graphite: '#737780', Amber: '#b87900', Violet: '#8e5bd9' };
   function spotlightColor() {
@@ -36,7 +36,7 @@
     const message = document.getElementById('favorite-message');
     const attempt = async operation => {
       try { await operation(); message.textContent = ''; }
-      catch { message.textContent = 'Could not save this change. Please try again.'; }
+      catch { refresh(); message.textContent = 'Could not save this change. Please try again.'; }
     };
     const colors = document.getElementById('spotlight-colors');
     for (const [name, color] of Object.entries(palette)) {
@@ -73,7 +73,13 @@
         }
         if (!list.children.length) { const row = document.createElement('li'); row.textContent = 'No matching favorites'; list.append(row); }
       }
+      document.getElementById('favorites-enabled').checked = state.enabled;
+      document.getElementById('favorite-profile-buttons').checked = state.profileButtons;
       document.getElementById('favorite-highlight').checked = state.highlight;
+      document.getElementById('favorite-highlight').disabled = !state.enabled;
+      document.getElementById('favorite-profile-buttons').disabled = !state.enabled;
+      document.querySelector('.spotlight-settings').disabled = !state.enabled || !state.highlight;
+      document.getElementById('favorites-state').textContent = state.enabled ? 'Active on X' : 'Paused on X · saved favorites are kept';
       document.getElementById('favorite-open').disabled = !query();
     };
     document.getElementById('favorite-search').oninput = refresh;
@@ -89,7 +95,7 @@
         input.value = '';
       });
     };
-    for (const [id, preference] of [['favorite-highlight', 'highlight']]) {
+    for (const [id, preference] of [['favorites-enabled', 'enabled'], ['favorite-highlight', 'highlight'], ['favorite-profile-buttons', 'profileButtons']]) {
       document.getElementById(id).onchange = event => attempt(() => save({ [preference]: event.target.checked }));
     }
     document.getElementById('favorite-open').onclick = () => chrome.tabs.create({ url: searchUrl('(' + query() + ')') });
@@ -103,6 +109,11 @@
       applyColor();
       // Restore rows marked by older builds without changing X's virtual row heights.
       document.querySelectorAll('[data-clearfeed-unmatched]').forEach(row => row.removeAttribute('data-clearfeed-unmatched'));
+      if (!state.enabled) {
+        document.querySelectorAll('[data-clearfeed-favorite]').forEach(row => row.removeAttribute('data-clearfeed-favorite'));
+        document.getElementById('clearfeed-save-person')?.remove();
+        return;
+      }
       for (const post of document.querySelectorAll('article[data-testid="tweet"]')) {
         const author = post.querySelector('[data-testid="User-Name"] a[href]');
         const handle = author?.getAttribute('href')?.split('/').filter(Boolean)[0]?.toLowerCase();
@@ -119,7 +130,7 @@
       const profile = document.querySelector('[data-testid="UserName"]');
       const handle = location.pathname.match(/^\/([a-zA-Z0-9_]{1,15})\/?$/)?.[1]?.toLowerCase();
       let button = document.getElementById('clearfeed-save-person');
-      if (profile && handle && !reserved.has(handle)) {
+      if (state.profileButtons && profile && handle && !reserved.has(handle)) {
         if (!button) { button = document.createElement('button'); button.id = 'clearfeed-save-person'; profile.after(button); }
         const label = state.people.includes(handle) ? 'Saved in Clearfeed' : 'Add to Clearfeed favorites';
         if (button.textContent !== label) button.textContent = label;
