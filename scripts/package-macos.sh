@@ -16,7 +16,7 @@ mkdir -p "$payload/icons"
 
 install -m 0644 "$repo"/manifest.json "$repo"/settings.js "$repo"/worker.js "$repo"/feed.js "$repo"/feed.css \
    "$repo"/popup.html "$repo"/popup.js "$repo"/popup.css "$repo"/welcome.html "$repo"/welcome.js \
-   "$repo"/setup.css "$repo"/LICENSE "$payload/"
+   "$repo"/favorites.js "$repo"/setup.css "$repo"/LICENSE "$payload/"
 install -m 0644 "$repo"/icons/icon{16,32,48,128}.png "$repo"/icons/{clearfeed,hero}.svg "$payload/icons/"
 install -m 0644 "$repo/installer/Manual Setup.txt" "$volume/Manual Setup.txt"
 install -m 0644 "$repo/LICENSE" "$volume/LICENSE.txt"

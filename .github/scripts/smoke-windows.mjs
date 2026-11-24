@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-assert.equal(process.platform, 'win32');
+assert.ok(['win32', 'darwin'].includes(process.platform));
 const testRoot = process.env.CLEARFEED_TEST_ROOT;
 const requireTools = createRequire(path.join(process.env.CLEARFEED_TEST_TOOLS, 'package.json'));
 const { default: puppeteer } = await import(pathToFileURL(requireTools.resolve('puppeteer')).href);
@@ -15,7 +15,7 @@ const browser = await puppeteer.launch({ headless: true, pipe: true, enableExten
 const home = 'https://x.com/home';
 const feed = `<!doctype html><html><body>
   <div id="organic" data-testid="cellInnerDiv">
-    <article data-testid="tweet"><p>Regular post</p></article>
+    <article data-testid="tweet"><div data-testid="User-Name"><a href="/nikki">Nikki</a></div><p data-testid="tweetText">Building with Chrome extensions</p></article>
   </div>
   <div id="sponsored" data-testid="cellInnerDiv">
     <div data-testid="placementTracking">
@@ -76,6 +76,32 @@ try {
   await checkFeed(page, true);
   await menu.bringToFront();
   await checkCount(menu, '2');
+  await menu.click('#tab-favorites');
+  await menu.select('#favorite-kind', 'people');
+  await menu.type('#favorite-input', '@nikki');
+  await menu.click('#favorite-form button');
+  await page.bringToFront();
+  await page.waitForFunction(() => document.querySelector('#organic').hasAttribute('data-clearfeed-favorite'), poll);
+  await menu.bringToFront();
+  await menu.select('#favorite-kind', 'topics');
+  await menu.type('#favorite-input', 'Chrome extensions');
+  await menu.click('#favorite-form button');
+  await menu.waitForFunction(() => document.querySelector('#favorite-topics').textContent.includes('Chrome extensions'), poll);
+  await menu.click('#favorite-only');
+  await page.bringToFront();
+  await page.waitForFunction(() => document.querySelector('#sponsored').hasAttribute('data-clearfeed-unmatched'), poll);
+  await menu.bringToFront();
+  await menu.reload();
+  await menu.click('#tab-favorites');
+  await menu.waitForFunction(() => document.querySelector('#favorite-only').checked && document.querySelector('#favorite-people').textContent.includes('@nikki'), poll);
+  await menu.click('#favorite-people button');
+  await page.bringToFront();
+  await page.waitForFunction(() => document.querySelector('#organic').hasAttribute('data-clearfeed-favorite'), poll);
+  await menu.bringToFront();
+  await menu.click('#favorite-topics button');
+  await page.bringToFront();
+  await page.waitForFunction(() => !document.querySelector('#organic').hasAttribute('data-clearfeed-favorite') && !document.querySelector('#organic').hasAttribute('data-clearfeed-unmatched'), poll);
+  console.log('Favorites saving, topic matching, filtering, removal and menu reload passed.');
   console.log(`Clearfeed ${manifest.version} passed in ${await browser.version()} on Windows ${process.arch}.`);
 } finally {
   await browser.close();

@@ -16,7 +16,7 @@ try {
     $files = @(
         'manifest.json', 'settings.js', 'worker.js', 'feed.js', 'feed.css',
         'popup.html', 'popup.js', 'popup.css', 'welcome.html', 'welcome.js',
-        'setup.css', 'LICENSE'
+        'setup.css', 'favorites.js', 'LICENSE'
     )
     foreach ($file in $files) {
         Copy-Item -LiteralPath (Join-Path $repo $file) -Destination $extension
