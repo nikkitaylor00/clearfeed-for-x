@@ -2,8 +2,18 @@
 'use strict';
 (() => {
   const key = 'clearfeedFavorites';
-  const empty = { people: [], topics: [], highlight: true };
+  const empty = { people: [], topics: [], highlight: true, color: '#007aff' };
   let state = { ...empty };
+  const palette = { Blue: '#007aff', Teal: '#00897b', Sage: '#66845b', Graphite: '#737780', Amber: '#b87900', Violet: '#8e5bd9' };
+  function spotlightColor() {
+    return /^#[0-9a-f]{6}$/i.test(state.color) ? state.color : empty.color;
+  }
+  function applyColor() {
+    const color = spotlightColor();
+    const rgb = [1, 3, 5].map(index => parseInt(color.slice(index, index + 2), 16)).join(', ');
+    document.documentElement.style.setProperty('--clearfeed-spotlight', color);
+    document.documentElement.style.setProperty('--clearfeed-spotlight-rgb', rgb);
+  }
   const normalize = value => value.normalize('NFKC').trim().toLocaleLowerCase();
   const searchUrl = query => 'https://x.com/search?' + new URLSearchParams({ q: query, f: 'live' });
   function query() {
@@ -28,7 +38,24 @@
       try { await operation(); message.textContent = ''; }
       catch { message.textContent = 'Could not save this change. Please try again.'; }
     };
+    const colors = document.getElementById('spotlight-colors');
+    for (const [name, color] of Object.entries(palette)) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-label', name);
+      button.title = name;
+      button.dataset.color = color;
+      button.style.setProperty('--swatch', color);
+      button.onclick = () => attempt(() => save({ color }));
+      colors.append(button);
+    }
+    document.getElementById('spotlight-custom').onchange = event => attempt(() => save({ color: event.target.value }));
     refresh = () => {
+      applyColor();
+      const color = spotlightColor();
+      for (const button of colors.children) button.setAttribute('aria-pressed', String(button.dataset.color === color));
+      document.getElementById('spotlight-custom').value = color;
+      document.getElementById('spotlight-preview').textContent = (Object.entries(palette).find(([, hex]) => hex === color)?.[0] || 'Custom') + ' spotlight';
       const filter = normalize(document.getElementById('favorite-search').value);
       for (const kind of ['people', 'topics']) {
         const list = document.getElementById('favorite-' + kind);
@@ -73,6 +100,7 @@
     function scan() {
       queued = false;
       observer.disconnect();
+      applyColor();
       // Restore rows marked by older builds without changing X's virtual row heights.
       document.querySelectorAll('[data-clearfeed-unmatched]').forEach(row => row.removeAttribute('data-clearfeed-unmatched'));
       for (const post of document.querySelectorAll('article[data-testid="tweet"]')) {

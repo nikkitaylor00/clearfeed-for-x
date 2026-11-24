@@ -23,7 +23,7 @@ To remove Clearfeed, click **Remove** on its Chrome card. You can then delete th
 
 ## Install on Windows
 
-1. [Download the Windows ZIP](https://github.com/nikkitaylor00/clearfeed-for-x/releases/download/v1.4.1/Clearfeed-for-X-1.4.1-Windows.zip), right-click it in File Explorer, and choose **Extract All**.
+1. [Download the Windows ZIP](https://github.com/nikkitaylor00/clearfeed-for-x/releases/download/v1.4.2/Clearfeed-for-X-1.4.2-Windows.zip), right-click it in File Explorer, and choose **Extract All**.
 2. Move the extracted **Clearfeed Extension** folder somewhere you’ll keep it, such as Documents.
 3. In Chrome 123 or newer, open `chrome://extensions`. Turn on **Developer mode**, click **Load unpacked**, and select the **Clearfeed Extension** folder containing `manifest.json`.
 4. Pin Clearfeed from Chrome’s Extensions menu, then open or refresh X. You can also open the **Windows Setup.txt** guide included in the ZIP.
@@ -48,6 +48,6 @@ Clearfeed is released under the [MIT license](LICENSE).
 
 ## Favorites
 
-Open the **Favorites** tab to save people by their @handle and topics by keyword, phrase or hashtag. You can also save a person from their X profile. Matching posts get a subtle purple highlight. **Open favorites feed** opens X search for your saved people and topics. Each saved item also links to its profile or search. Favorites and preferences stay in local Chrome storage.
+Open the **Favorites** tab to save people by their @handle and topics by keyword, phrase or hashtag. You can also save a person from their X profile. Matching posts get a subtle blue spotlight by default. Choose Blue, Teal, Sage, Graphite, Amber, Violet or a custom color under **Spotlight color** in Favorites. The color is saved locally and applies to open X tabs. **Open favorites feed** opens X search for your saved people and topics. Each saved item also links to its profile or search. Favorites and preferences stay in local Chrome storage.
 
 Version 1.4.1 fixes feed jumping by retiring the in-place favorites-only filter. Use **Open favorites feed** to view your saved people and topics through X search. Favorites highlights preserve the size and position of posts in Home.

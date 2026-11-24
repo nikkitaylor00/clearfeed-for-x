@@ -20,5 +20,5 @@
   display: none !important;
 }
 
-[data-clearfeed-favorite] { box-shadow: inset 3px 0 #9877ff; background-color:rgba(135,100,255,.07); }
-#clearfeed-save-person { border:1px solid #9877ff; border-radius:20px; padding:9px 16px; background:transparent; color:#9877ff; font:600 14px system-ui; margin:8px 0; cursor:pointer; }
+[data-clearfeed-favorite] { box-shadow: inset 3px 0 var(--clearfeed-spotlight, #007aff); background-color:rgba(var(--clearfeed-spotlight-rgb, 0, 122, 255), .045); }
+#clearfeed-save-person { border:1px solid var(--clearfeed-spotlight, #007aff); border-radius:20px; padding:9px 16px; background:transparent; color:var(--clearfeed-spotlight, #007aff); font:600 14px system-ui; margin:8px 0; cursor:pointer; }

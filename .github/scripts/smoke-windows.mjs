@@ -84,6 +84,19 @@ try {
   await page.bringToFront();
   await page.waitForFunction(() => document.querySelector('#organic').hasAttribute('data-clearfeed-favorite'), poll);
   await menu.bringToFront();
+  assert.equal(await menu.$eval('#spotlight-custom', input => input.value), '#007aff');
+  await menu.click('#spotlight-colors button[aria-label="Teal"]');
+  await page.bringToFront();
+  await page.waitForFunction(() => getComputedStyle(document.querySelector('#organic')).boxShadow.includes('0, 137, 123'), poll);
+  await menu.bringToFront();
+  await menu.evaluate(() => {
+    const input = document.querySelector('#spotlight-custom');
+    input.value = '#c05040';
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.bringToFront();
+  await page.waitForFunction(() => getComputedStyle(document.querySelector('#organic')).boxShadow.includes('192, 80, 64'), poll);
+  await menu.bringToFront();
   await menu.select('#favorite-kind', 'topics');
   await menu.type('#favorite-input', 'Chrome extensions');
   await menu.click('#favorite-form button');
@@ -147,6 +160,8 @@ try {
   await restored.bringToFront();
   await restored.evaluate(() => document.querySelector('#tab-favorites').click());
   await restored.waitForFunction(() => document.querySelector('#favorite-people').textContent.includes('@tester'), poll);
+  await restored.waitForFunction(() => document.querySelector('#spotlight-custom').value === '#c05040', poll);
+  console.log('Default blue, preset and custom spotlight colors passed and persisted after restart.');
   console.log('Favorites, preferences and all-time count survived a full Chrome restart.');
   console.log('Favorites saving, topic matching, stable scrolling, removal and menu reload passed.');
   console.log(`Clearfeed ${manifest.version} passed in ${await browser.version()} on ${process.platform} ${process.arch}.`);
